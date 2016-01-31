@@ -1,0 +1,6 @@
+[ { "Name": "Bob", "ID": 123, "Email": "bob@augmentedjs.org" },
+ { "Name": "Jonathan", "ID": 234, "Email": "jonathon@augmentedjs.org" },
+ { "Name": "Corey", "ID": 345, "Email": "corey@augmentedjs.org" },
+ { "Name": "Seema", "ID": 456, "Email": "seema@augmentedjs.org" },
+ { "Name": "Jasmine", "ID": 567, "Email": "jasmine@augmentedjs.org" }
+]
