@@ -5,6 +5,7 @@ require.config({
 		'jquery': 'lib/jquery-2.1.4.min',
 		'underscore': 'lib/lodash.min',
 		'backbone': 'lib/backbone-min',
+        //'backbone': 'lib/exoskeleton',
 		'handlebars': 'lib/handlebars-v4.0.2',
 		'text': 'lib/text',
 		'json': 'lib/json',
@@ -20,7 +21,7 @@ require.config({
 			'exports': '$'
 		},
 		backbone: {
-		    'deps': ['jquery','underscore'],//, 'handlebars'],
+		    'deps': ['jquery', 'underscore'],
 			'exports': 'Backbone'
 		},
 		underscore: {
@@ -50,17 +51,6 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
 
         var mainView = Augmented.Presentation.Mediator.extend({
             el: "#main",
-            events: {
-                "click button#ping": function() { this.trigger("bubbaEvent", "Ping!"); },
-                "click button#clear": function() {
-                    this.trigger("tableEvent", "clear");
-                    this.trigger("tableEvent", "refresh");
-                },
-                "click button#fetch": function() {
-                    this.trigger("tableEvent", "publish");
-                    this.trigger("tableEvent", "refresh");
-                }
-            },
             template: "<h1>Simple Example</h1><h4><em>Slightly</em> better hello world!</h4><hr/><div id=\"autoTable\"></div><div id=\"viewer\"></div><div id=\"controlPanel\"><div>",
             init: function() {
                 this.on('bubbaEvent',
@@ -158,9 +148,6 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
         var jsonView = Augmented.Presentation.Colleague.extend({
             el: "#viewer",
             data: "",
-            /*events: {   Don't listen here!!! :)
-                "click #p": function() { this.trigger("bubbaEvent", "Ping!"); }
-            },*/
             init: function() {
                 this.on('bubbaEvent', this.bubba);
             },
@@ -174,11 +161,23 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
                     logger.debug("native");
                     var e = Augmented.Utility.isString(this.el) ? document.querySelector(this.el) : this.el;
                     if (e) {
-                        e.innerHTML = "<p>Main View (Mediator) is observing in these channels: <strong>" + this.data + "</strong></p>";
+                        var h = "<p>Main View (Mediator) is observing in these channels: <ul>";
+
+                        for(var i=0;i < this.data.length; i++) {
+                            h = h + "<li>" + this.data[i] + "</li>";
+                        }
+                        h = h + "</ul></p>";
+                        e.innerHTML = h;
                     }
                 } else if (this.$el) {
                     logger.debug("jquery");
-                    this.$el.html("<p>Main View (Mediator) is observing in these channels: <strong>" + this.data + "</strong></p>");
+                    var h = "<p>Main View (Mediator) is observing in these channels: <ul>";
+
+                    for(var i=0;i < this.data.length; i++) {
+                        h = h + "<li>" + this.data[i] + "</li>";
+                    }
+                    h = h + "</ul></p>";
+                    this.$el.html(h);
                 } else {
                     logger.debug("no element anchor");
                 }
@@ -197,13 +196,22 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
             "view" // channel
         );
 
-        var c = JSON.stringify(Object.keys(view.getChannels()));
-        jv.data = c;
-        logger.debug("Main View (Mediator) is observing in these channels: " + c);
-
         var controlPanelView = Augmented.Presentation.Colleague.extend({
             el: "#controlPanel",
             template: "<button id=\"ping\">Ping Bubba</button><button id=\"clear\">Clear Table</button><button id=\"fetch\">Fetch Table</button>",
+            events: {
+                "click button#clear": function() {
+                    this.sendMessage("tableEvent", "clear");
+                    this.sendMessage("tableEvent", "refresh");
+                },
+                "click button#fetch": function() {
+                    this.sendMessage("tableEvent", "publish");
+                    this.sendMessage("tableEvent", "refresh");
+                },
+                "click button#ping": function() {
+                    this.sendMessage("bubbaEvent", "Ping!");
+                }
+            },
             render: function() {
                 logger.debug("I got to render - " + this.$el + ", " + this.el);
                 if (this.el) {
@@ -230,6 +238,10 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
             }, // callback
             "control" // channel
         );
+
+        var c = Object.keys(view.getChannels());
+        jv.data = c;
+        logger.debug("Main View (Mediator) is observing in these channels: " + c);
 
         var asyncQueue = new Augmented.Utility.AsynchronousQueue(1000);
         asyncQueue.process(
