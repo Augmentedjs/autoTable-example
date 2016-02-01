@@ -2,7 +2,7 @@
 /* CONTAINERS */
 body {
     /* Browsers have default 8px margins _or_ padding! */
-  margin: 8px; 
+  margin: 8px;
   padding: 0;
   font-size: 100%; /* See: http://www.informationarchitects.jp/en/100e2r/ */
   line-height: 1.5; /* Default value, `normal`, depends on the font */
@@ -96,4 +96,39 @@ td, th {
 }
 td:first-child, th:first-child {
   empty-cells: hide; /* Hide empty cells when they're the first in the row */
+}
+
+table caption {
+    background-color: black;
+    color: white;
+}
+
+/* pagfination styles */
+div.paginationControl {
+    display: block;
+    font-size: 10pt;
+    margin: 5px 0 5px 0;
+}
+
+div.paginationControl > span {
+    display: inline-block;
+    padding: 3px;
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    background-color: #e0e0e0;
+    width: 6em;
+}
+
+div.paginationControl > span.first, div.paginationControl > span.previous {
+    text-align: left;
+}
+
+div.paginationControl > span.current {
+    text-align: center;
+}
+
+div.paginationControl > span.last, div.paginationControl > span.next {
+    text-align: right;
 }
