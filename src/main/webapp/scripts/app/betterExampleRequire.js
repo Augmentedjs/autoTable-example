@@ -10,11 +10,11 @@ require.config({
 		'text': 'lib/text',
 		'json': 'lib/json',
 
-        'augmented': '/augmented/scripts/core/augmented',
-        'augmentedPresentation': '/augmented/scripts/presentation/augmentedPresentation'
+        //'augmented': '/augmented/scripts/core/augmented',
+        //'augmentedPresentation': '/augmented/scripts/presentation/augmentedPresentation'
 
-		//'augmented': 'lib/augmented/augmented',
-        //'augmentedPresentation': 'lib/augmented/augmentedPresentation'
+		'augmented': 'lib/augmented/augmented',
+        'augmentedPresentation': 'lib/augmented/augmentedPresentation'
 	},
 	'shim': {
 		jquery: {
@@ -115,6 +115,11 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
                     ];
 
         var myAt = Augmented.Presentation.AutomaticTable.extend({
+            events: {
+                "click": function() {
+                    alert("click");
+                }
+            },
             init: function() {
                 this.on('tableEvent', this.fireMethod);
             },
