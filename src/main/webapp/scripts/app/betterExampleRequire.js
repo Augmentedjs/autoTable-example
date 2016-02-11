@@ -10,11 +10,11 @@ require.config({
 		'text': 'lib/text',
 		'json': 'lib/json',
 
-        //'augmented': '/augmented/scripts/core/augmented',
-        //'augmentedPresentation': '/augmented/scripts/presentation/augmentedPresentation'
+        'augmented': '/augmented/scripts/core/augmented',
+        'augmentedPresentation': '/augmented/scripts/presentation/augmentedPresentation'
 
-		'augmented': 'lib/augmented/augmented',
-        'augmentedPresentation': 'lib/augmented/augmentedPresentation'
+		//'augmented': 'lib/augmented/augmented',
+        //'augmentedPresentation': 'lib/augmented/augmentedPresentation'
 	},
 	'shim': {
 		jquery: {
@@ -115,11 +115,6 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
                     ];
 
         var myAt = Augmented.Presentation.AutomaticTable.extend({
-            events: {
-                "click": function() {
-                    alert("click");
-                }
-            },
             init: function() {
                 this.on('tableEvent', this.fireMethod);
             },
@@ -254,5 +249,10 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
             jv.render(),
             cp.render()
         );
+ /*var clickFunc = function(e) { alert("click: " + e.target); };
+        var list = document.querySelectorAll("#autoTable table tr th");
+        for (var i=0; i < list.length; i++) {
+            list[i].addEventListener("click", clickFunc);
+        }*/
     }
 );
