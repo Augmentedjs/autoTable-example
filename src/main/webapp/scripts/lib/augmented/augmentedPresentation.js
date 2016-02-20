@@ -734,6 +734,18 @@
                 if (options.data) {
                     this.populate(options.data);
                 }
+
+                if (options.renderPaginationControl) {
+                    this.renderPaginationControl = options.renderPaginationControl;
+                }
+
+                if (options.sortable) {
+                    this.sortable = options.sortable;
+                }
+
+                if (options.lineNumbers) {
+                    this.lineNumbers = options.lineNumbers;
+                }
             }
             if (this.uri) {
                 this.collection.url = this.uri;
@@ -807,7 +819,8 @@
          * @returns {string} Returns the template
          */
         compileTemplate: function() {
-            var h = defaultTableCompile(this.name, this.description, this.columns, this.collection.toJSON(), this.lineNumbers);
+            var data = this.collection.toJSON();
+            var h = defaultTableCompile(this.name, this.description, this.columns, data, this.lineNumbers);
             if (this.renderPaginationControl) {
                 h = h + defaultPaginationControl(this.currentPage(), this.totalPages());
             }

@@ -6,6 +6,7 @@ body {
   padding: 0;
   font-size: 100%; /* See: http://www.informationarchitects.jp/en/100e2r/ */
   line-height: 1.5; /* Default value, `normal`, depends on the font */
+  font-family: "Trebuchet MS", "Verdana", sans-serif;
 }
 /* HTML5 blocks - needed in older browsers */
 article, aside, figcaption, figure, footer, header, nav, section {
@@ -86,13 +87,14 @@ input, button, select {
 table {
   border-collapse: collapse; /* Merges cell borders together */
   /* Browser default: border-collapse: separate; border-spacing: 2px; */
-   border: 1px solid black;
+  border: 1px solid black;
 }
 td, th {
   padding: 3px; /* Same as browser default - set to "0" to remove padding */
   vertical-align: top; /* Default is "middle" */
   text-align: left; /* Default for TH elements is "center" */
   border: 1px solid black;
+  color: black;
 }
 td:first-child, th:first-child {
   empty-cells: hide; /* Hide empty cells when they're the first in the row */
@@ -101,6 +103,19 @@ td:first-child, th:first-child {
 table caption {
     background-color: black;
     color: white;
+}
+
+th.sorted {
+    background-color: #dddddd;
+    color: blue;
+}
+
+th.sorted::after {
+    content: "\21f5";
+}
+
+th.number, td.number, th.integer, td.integer {
+    text-align: right;
 }
 
 /* pagfination styles */

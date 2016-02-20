@@ -128,7 +128,9 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
         var at = new myAt({
             schema : schema,
             el: "#autoTable",
-            data: data
+            data: data,
+            sortable: true,
+            lineNumbers: false
         });
 
         var view = new mainView();
@@ -162,8 +164,8 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
                     var e = Augmented.Utility.isString(this.el) ? document.querySelector(this.el) : this.el;
                     if (e) {
                         var h = "<p>Main View (Mediator) is observing in these channels: <ul>";
-
-                        for(var i=0;i < this.data.length; i++) {
+                        var i = 0, l = this.data.length;
+                        for(i=0;i < l; i++) {
                             h = h + "<li>" + this.data[i] + "</li>";
                         }
                         h = h + "</ul></p>";
@@ -172,8 +174,8 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
                 } else if (this.$el) {
                     logger.debug("jquery");
                     var h = "<p>Main View (Mediator) is observing in these channels: <ul>";
-
-                    for(var i=0;i < this.data.length; i++) {
+                    var i = 0, l = this.data.length;
+                    for(i=0;i < l; i++) {
                         h = h + "<li>" + this.data[i] + "</li>";
                     }
                     h = h + "</ul></p>";
