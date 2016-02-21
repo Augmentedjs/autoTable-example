@@ -5,14 +5,12 @@ require.config({
 		'jquery': 'lib/jquery-2.1.4.min',
 		'underscore': 'lib/lodash.min',
 		'backbone': 'lib/backbone-min',
-        //'backbone': 'lib/exoskeleton',
-		'handlebars': 'lib/handlebars-v4.0.2',
-		'text': 'lib/text',
-		'json': 'lib/json',
 
+        // hosted version at context /augmented
         'augmented': '/augmented/scripts/core/augmented',
         'augmentedPresentation': '/augmented/scripts/presentation/augmentedPresentation'
 
+        // local version
 		//'augmented': 'lib/augmented/augmented',
         //'augmentedPresentation': 'lib/augmented/augmentedPresentation'
 	},
@@ -27,9 +25,6 @@ require.config({
 		underscore: {
 			'exports': '_'
 		},
-		/*handlebars: {
-			'exports': 'Handlebars'
-		},*/
 
 		augmented: {
 			'deps': ['backbone'],
@@ -130,7 +125,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
             el: "#autoTable",
             data: data,
             sortable: true,
-            lineNumbers: false
+            lineNumbers: true
         });
 
         var view = new mainView();
@@ -251,10 +246,5 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
             jv.render(),
             cp.render()
         );
- /*var clickFunc = function(e) { alert("click: " + e.target); };
-        var list = document.querySelectorAll("#autoTable table tr th");
-        for (var i=0; i < list.length; i++) {
-            list[i].addEventListener("click", clickFunc);
-        }*/
     }
 );
