@@ -125,7 +125,8 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
             el: "#autoTable",
             data: data,
             sortable: true,
-            lineNumbers: true
+            lineNumbers: true,
+            editable: true
         });
 
         var view = new mainView();

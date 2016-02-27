@@ -88,13 +88,27 @@ table {
   border-collapse: collapse; /* Merges cell borders together */
   /* Browser default: border-collapse: separate; border-spacing: 2px; */
   border: 1px solid black;
+  width: 100%;
 }
 td, th {
-  padding: 3px; /* Same as browser default - set to "0" to remove padding */
-  vertical-align: top; /* Default is "middle" */
-  text-align: left; /* Default for TH elements is "center" */
-  border: 1px solid black;
-  color: black;
+    border: 1px solid black;
+    color: black;
+    max-width: 300px;
+    overflow: auto;
+    padding: 3px;
+    height: 25px;
+    text-align: left;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    white-space: normal;
+    word-wrap: break-word;
+}
+th[data-name="lineNumber"]{
+    width: 25px;
+    text-overflow: ellipsis;
+}
+td.label {
+    font-weight: bold;
 }
 td:first-child, th:first-child {
   empty-cells: hide; /* Hide empty cells when they're the first in the row */
@@ -103,6 +117,10 @@ td:first-child, th:first-child {
 table caption {
     background-color: black;
     color: white;
+}
+
+th {
+    background-color: #dddddd;
 }
 
 th.sorted {
@@ -146,4 +164,20 @@ div.paginationControl > span.current {
 
 div.paginationControl > span.last, div.paginationControl > span.next {
     text-align: right;
+}
+
+td input {
+    width: 100%;
+    border: 0px none;
+    height: 100%;
+    display: inline-block;
+    position: relative;
+    background-color: rgba(255,255,255,0);
+}
+td input:focus {
+    background-color: #ffffcc;
+}
+
+td:hover {
+    background-color: #eeeeee;
 }
