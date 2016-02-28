@@ -102,12 +102,16 @@ td, th {
     vertical-align: top;
     white-space: normal;
     word-wrap: break-word;
+    font-size: 1em;
 }
 th[data-name="lineNumber"]{
     width: 25px;
     text-overflow: ellipsis;
+    text-align: right;
 }
 td.label {
+    color: #333333;
+    font-size: 1em;
     font-weight: bold;
 }
 td:first-child, th:first-child {
@@ -124,12 +128,16 @@ th {
 }
 
 th.sorted {
-    background-color: #dddddd;
+    background-color: #bbbbbb;
     color: blue;
+}
+td.sorted {
+    background-color: #eeeeee;
+    color: #000033;
 }
 
 th.sorted::after {
-    content: "\21f5";
+    content: "\00a0\21f5";
 }
 
 th.number, td.number, th.integer, td.integer {
