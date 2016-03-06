@@ -15,17 +15,17 @@ require.config({
         //'augmentedPresentation': 'lib/augmented/augmentedPresentation'
 	},
 	'shim': {
-		jquery: {
+		/*jquery: {
 			'exports': '$'
 		},
 		backbone: {
 		    'deps': ['jquery', 'underscore'],
 			'exports': 'Backbone'
-		},
+		},*/
 		underscore: {
 			'exports': '_'
-		},
-
+		}
+        /*
 		augmented: {
 			'deps': ['backbone'],
 			'exports': 'Augmented'
@@ -33,7 +33,7 @@ require.config({
         augmentedPresentation: {
 			'deps': ['underscore','augmented'],
 			'exports': 'Augmented'
-		}
+		}*/
 	}
 });
 
@@ -196,7 +196,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
 
         var controlPanelView = Augmented.Presentation.Colleague.extend({
             el: "#controlPanel",
-            template: "<button id=\"ping\">Ping Bubba</button><button id=\"clear\">Clear Table</button><button id=\"fetch\">Fetch Table</button>",
+            template: "<button id=\"ping\">Ping Bubba</button><button id=\"clear\">Clear Table</button><button id=\"fetch\">Fetch Table</button><button id=\"validate\">Validate Table</button>",
             events: {
                 "click button#clear": function() {
                     this.sendMessage("tableEvent", "clear");
@@ -208,6 +208,9 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
                 },
                 "click button#ping": function() {
                     this.sendMessage("bubbaEvent", "Ping!");
+                },
+                "click button#validate": function() {
+                    this.sendMessage("tableEvent", "validate");
                 }
             },
             render: function() {

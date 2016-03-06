@@ -189,3 +189,7 @@ td input:focus {
 td:hover {
     background-color: #eeeeee;
 }
+
+ul.errors {
+    color: red;
+}
