@@ -102,14 +102,16 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
             "required": ["ID", "Name"]
         };
 
-        var data = [ { "Name": "Bob", "ID": 123, "Email": "bob@augmentedjs.org" },
-                     { "Name": "Jonathan", "ID": 234, "Email": "jonathon@augmentedjs.org" },
-                     { "Name": "Corey", "ID": 345, "Email": "corey@augmentedjs.org" },
-                     { "Name": "Seema", "ID": 456, "Email": "seema@augmentedjs.org" },
-                     { "Name": "Jasmine", "ID": 567, "Email": "jasmine@augmentedjs.org" }
+        var data = [ { "Name": "Bob", "ID": 123, "Email": "bob@augmentedjs.com" },
+                     { "Name": "Jonathan", "ID": 234, "Email": "jonathon@augmentedjs.com" },
+                     { "Name": "Corey", "ID": 345, "Email": "corey@augmentedjs.com" },
+                     { "Name": "Seema", "ID": 456, "Email": "seema@augmentedjs.com" },
+                     { "Name": "Jasmine", "ID": 567, "Email": "jasmine@augmentedjs.com" }
                     ];
 
-        var myAt = Augmented.Presentation.AutomaticTable.extend({
+        var myAt = Augmented.Presentation.
+        //AutomaticTable.extend({
+        DirectDOMAutomaticTable.extend({
             init: function() {
                 this.on('tableEvent', this.fireMethod);
             },
