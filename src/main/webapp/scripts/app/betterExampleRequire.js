@@ -66,7 +66,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
                 logger.debug("I got to render - " + this.$el + ", " + this.el);
                 if (this.el) {
                     logger.debug("native");
-                    var e = Augmented.Utility.isString(this.el) ? document.querySelector(this.el) : this.el;
+                    var e = Augmented.isString(this.el) ? document.querySelector(this.el) : this.el;
                     if (e) {
                         e.innerHTML = this.template;
                     }
@@ -125,10 +125,12 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
         var at = new myAt({
             schema : schema,
             el: "#autoTable",
-            data: data,
+            //data: data,
+            crossOrigin: false,
             sortable: true,
             lineNumbers: true,
-            editable: true
+            editable: true,
+            uri: "/example/data/table.json"
         });
 
         var view = new mainView();
@@ -159,7 +161,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
                 logger.debug("I got to render - " + this.$el + ", " + this.el);
                 if (this.el) {
                     logger.debug("native");
-                    var e = Augmented.Utility.isString(this.el) ? document.querySelector(this.el) : this.el;
+                    var e = Augmented.isString(this.el) ? document.querySelector(this.el) : this.el;
                     if (e) {
                         var h = "<p>Main View (Mediator) is observing in these channels: <ul>";
                         var i = 0, l = this.data.length;
@@ -205,8 +207,8 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
                     this.sendMessage("tableEvent", "refresh");
                 },
                 "click button#fetch": function() {
-                    this.sendMessage("tableEvent", "publish");
-                    this.sendMessage("tableEvent", "refresh");
+                    this.sendMessage("tableEvent", "fetch");
+                    //this.sendMessage("tableEvent", "refresh");
                 },
                 "click button#ping": function() {
                     this.sendMessage("bubbaEvent", "Ping!");
@@ -219,7 +221,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
                 logger.debug("I got to render - " + this.$el + ", " + this.el);
                 if (this.el) {
                     logger.debug("native");
-                    var e = Augmented.Utility.isString(this.el) ? document.querySelector(this.el) : this.el;
+                    var e = Augmented.isString(this.el) ? document.querySelector(this.el) : this.el;
                     if (e) {
                         e.innerHTML = this.template;
                     }
@@ -249,6 +251,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
         var asyncQueue = new Augmented.Utility.AsynchronousQueue(1000);
         asyncQueue.process(
             at.render(),
+            at.fetch(),
             jv.render(),
             cp.render()
         );
