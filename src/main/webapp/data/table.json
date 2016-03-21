@@ -1,6 +1,7 @@
-[ { "Name": "Bob", "ID": 123, "Email": "bob@augmentedjs.org" },
- { "Name": "Jonathan", "ID": 234, "Email": "jonathon@augmentedjs.org" },
- { "Name": "Corey", "ID": 345, "Email": "corey@augmentedjs.org" },
- { "Name": "Seema", "ID": 456, "Email": "seema@augmentedjs.org" },
- { "Name": "Jasmine", "ID": 567, "Email": "jasmine@augmentedjs.org" }
+[ { "Name": "Bob", "ID": 123, "Email": "bob@augmentedjs.org", "Active": true },
+ { "Name": "Jonathan", "ID": 234, "Email": "jonathon@augmentedjs.org", "Active": true },
+ { "Name": "Corey", "ID": 345, "Email": "corey@augmentedjs.org", "Active": true },
+ { "Name": "Seema", "ID": 456, "Email": "seema@augmentedjs.org", "Active": true },
+ { "Name": "Jasmine", "ID": 567, "Email": "jasmine@augmentedjs.org", "Active": true },
+ { "Name": "Bubba", "ID": 678, "Email": "bubba@augmentedjs.org", "Active": false }
 ]

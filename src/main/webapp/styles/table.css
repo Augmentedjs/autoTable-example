@@ -1,0 +1,159 @@
+hr {
+    border: 0;
+    border-top: 1px solid #546e7a;
+    margin-bottom: 25px;
+    margin-top: 10px;
+}
+
+/* TABLES */
+table {
+  border-collapse: collapse; /* Merges cell borders together */
+  /* Browser default: border-collapse: separate; border-spacing: 2px; */
+  border: 1px solid #546e7a;
+  width: 100%;
+}
+td {
+    background-color: #eceff1;
+    color: rgba(0, 0, 0, 0.85);
+}
+
+td input {
+    color: rgba(0, 0, 0, 0.85);
+}
+
+td, th {
+    border: 1px solid #546e7a;
+    color: black;
+    max-width: 300px;
+    overflow: auto;
+    padding: 3px;
+    height: 25px;
+    line-height: 25px;
+    text-align: left;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: normal;
+    word-wrap: break-word;
+    font-size: 1em;
+}
+th[data-name="lineNumber"]{
+    width: 25px;
+    text-overflow: ellipsis;
+    text-align: right;
+}
+td.label {
+    color: #607d8b;
+    font-size: 1em;
+    font-weight: 400;
+}
+td:first-child, th:first-child {
+  empty-cells: hide; /* Hide empty cells when they're the first in the row */
+}
+
+table caption {
+    background-color: #263238;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+th {
+    background-color: #607d8b;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 400;
+}
+
+th.sorted {
+    background-color: #546e7a;
+}
+td.sorted {
+    background-color: #cfd8dc;
+}
+
+th.sorted::after {
+    content: "\00a0\21f5";
+}
+
+th.number, td.number, th.integer, td.integer {
+    text-align: right;
+}
+
+/* pagfination styles */
+div.paginationControl {
+    display: block;
+    font-size: 10pt;
+    margin: 5px 0 5px 0;
+}
+
+div.paginationControl > span {
+    display: inline-block;
+    padding: 3px;
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    background-color: #e0e0e0;
+    width: 6em;
+}
+
+div.paginationControl > span.first, div.paginationControl > span.previous {
+    text-align: left;
+}
+
+div.paginationControl > span.current {
+    text-align: center;
+}
+
+div.paginationControl > span.last, div.paginationControl > span.next {
+    text-align: right;
+}
+
+td input {
+    width: 100%;
+    border: 0px none;
+    height: 100%;
+    display: inline-block;
+    position: relative;
+    background-color: rgba(255,255,255,0);
+}
+td input:focus {
+    background-color: rgba(255,255,204,0.85);
+}
+
+td:hover {
+    background-color: white;
+}
+
+ul.errors {
+    color: red;
+}
+section#main {
+    margin: 15px;
+}
+
+button {
+    background-color: #cfd8dc;
+    color: rgba(0, 0, 0, 0.85);
+    border: 1px solid #607d8b;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
+    margin-right: 0;
+    margin-left: 10px;
+    padding: 5px;
+}
+
+button:hover {
+    background-color: #eceff1;
+}
+
+div#viewer {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+div#controlPanel {
+    background-color: #eceff1;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
