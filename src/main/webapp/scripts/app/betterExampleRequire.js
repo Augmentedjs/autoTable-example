@@ -17,12 +17,26 @@ require.config({
 });
 
 require(['augmented', 'augmentedPresentation'], function(Augmented) {
+    /*var schema = null;
+    Augmented.ajax({
+        url: "/example/data/tableSchema.json",
+        contentType: 'application/json',
+        dataType: 'json',
+        async: false,
+        parse: true,
+        success: function(data, status) {
+            if (typeof data === "string") {
+                schema = JSON.parse(data);
+            } else {
+                schema = data;
+            }
+        },
+        failure: function(data, status) { logger.error("Failed to fetch schema!"); }
+    });*/
 
 	var app = new Augmented.Presentation.Application("Example");
     // async calls to inject CSS and Fonts
-    app.registerStylesheet("https://fonts.googleapis.com/css?family=Work+Sans:300");
-    app.registerStylesheet("https://fonts.googleapis.com/css?family=Work+Sans:400");
-    app.registerStylesheet("https://fonts.googleapis.com/css?family=BenchNine");
+    app.registerStylesheet("https://fonts.googleapis.com/css?family=Work+Sans:300,400");
     app.registerStylesheet("styles/main.css");
     app.registerStylesheet("styles/table.css");
     // get history going
@@ -66,7 +80,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
         }
     });
 
-    var schema = {
+    /*var schema = {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "title": "User",
         "description": "A list of users",
@@ -91,15 +105,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
             }
         },
         "required": ["ID", "Name"]
-    };
-
-    var data = [ { "Name": "Bob", "ID": 123, "Email": "bob@augmentedjs.org", "Active": true },
-                 { "Name": "Jonathan", "ID": 234, "Email": "jonathon@augmentedjs.org", "Active": true },
-                 { "Name": "Corey", "ID": 345, "Email": "corey@augmentedjs.org", "Active": true },
-                 { "Name": "Seema", "ID": 456, "Email": "seema@augmentedjs.org", "Active": true },
-                 { "Name": "Jasmine", "ID": 567, "Email": "jasmine@augmentedjs.org", "Active": true },
-                 { "Name": "Bubba", "ID": 678, "Email": "bubba@augmentedjs.org", "Active": false }
-                ];
+    };*/
 
     var myAt = Augmented.Presentation.DirectDOMAutomaticTable.extend({
         init: function() {
@@ -112,8 +118,9 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
             this.populate(data);
         }
     });
+
     var at = new myAt({
-        schema : schema,
+        schema: "/example/data/tableSchema.json",
         el: "#autoTable",
         //data: data,
         crossOrigin: false,
@@ -240,7 +247,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
 
     var asyncQueue = new Augmented.Utility.AsynchronousQueue(1000);
     asyncQueue.process(
-        at.render(),
+        //at.render(),
         at.fetch(),
         jv.render(),
         cp.render()

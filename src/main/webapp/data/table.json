@@ -1,7 +1,10 @@
-[ { "Name": "Bob", "ID": 123, "Email": "bob@augmentedjs.org", "Active": true },
- { "Name": "Jonathan", "ID": 234, "Email": "jonathon@augmentedjs.org", "Active": true },
- { "Name": "Corey", "ID": 345, "Email": "corey@augmentedjs.org", "Active": true },
- { "Name": "Seema", "ID": 456, "Email": "seema@augmentedjs.org", "Active": true },
- { "Name": "Jasmine", "ID": 567, "Email": "jasmine@augmentedjs.org", "Active": true },
- { "Name": "Bubba", "ID": 678, "Email": "bubba@augmentedjs.org", "Active": false }
+[ { "Name": "Bob", "ID": 123, "Email": "bob@augmentedjs.org", "Role": "Architect", "Active": true },
+ { "Name": "Jonathan", "ID": 234, "Email": "jonathon@augmentedjs.org", "Role": "Developer", "Active": true },
+ { "Name": "Corey", "ID": 345, "Email": "corey@augmentedjs.org", "Role": "Tech Lead", "Active": true },
+ { "Name": "Seema", "ID": 456, "Email": "seema@augmentedjs.org", "Role": "Developer", "Active": true },
+ { "Name": "Jasmine", "ID": 567, "Email": "jasmine@augmentedjs.org", "Role": "Product Owner", "Active": true },
+ { "Name": "Anna", "ID": 678, "Email": "anna@augmentedjs.org", "Role": "Developer", "Active": false },
+ { "Name": "Joni", "ID": 789, "Email": "joni@augmentedjs.org", "Role": "UX Designer", "Active": false },
+ { "Name": "Divya", "ID": 890, "Email": "divya@augmentedjs.org", "Role": "QE", "Active": false },
+ { "Name": "Michael", "ID": 901, "Email": "michael@augmentedjs.org", "Role": "Operations", "Active": false }
 ]
