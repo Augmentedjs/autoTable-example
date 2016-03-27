@@ -17,23 +17,6 @@ require.config({
 });
 
 require(['augmented', 'augmentedPresentation'], function(Augmented) {
-    /*var schema = null;
-    Augmented.ajax({
-        url: "/example/data/tableSchema.json",
-        contentType: 'application/json',
-        dataType: 'json',
-        async: false,
-        parse: true,
-        success: function(data, status) {
-            if (typeof data === "string") {
-                schema = JSON.parse(data);
-            } else {
-                schema = data;
-            }
-        },
-        failure: function(data, status) { logger.error("Failed to fetch schema!"); }
-    });*/
-
 	var app = new Augmented.Presentation.Application("Example");
     // async calls to inject CSS and Fonts
     app.registerStylesheet("https://fonts.googleapis.com/css?family=Work+Sans:300,400");
@@ -46,7 +29,12 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
 
     var mainView = Augmented.Presentation.Mediator.extend({
         el: "#main",
-        template: "<h1>Simple Example</h1><h2><em>Slightly</em> better hello world!</h2><hr/><div id=\"autoTable\"></div><div id=\"viewer\"></div><div id=\"controlPanel\"><div>",
+        template: "<div id=\"logo\"></div><h1>Augmented Automatic Table</h1><h2><em>JSON-Schema</em> powered presentation</h2><div id=\"container\"><div id=\"autoTable\"></div><div id=\"viewer\"></div><div id=\"controlPanel\"><div></div>",
+        events: {
+            "click div#logo": function() {
+                window.location = "http://www.augmentedjs.com";
+            }
+        },
         init: function() {
             this.on('bubbaEvent',
                 function(data) {
@@ -80,33 +68,6 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
         }
     });
 
-    /*var schema = {
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "title": "User",
-        "description": "A list of users",
-        "type": "object",
-        "properties": {
-            "Name" : {
-                "description": "Name of the user",
-                "type" : "string"
-            },
-            "ID" : {
-                "description": "The unique identifier for a user",
-                "type" : "integer"
-            },
-            "Email" : {
-                "description": "The email of the user",
-                "type" : "string",
-                "format": "email"
-            },
-            "Active" : {
-                "description": "Is the user Active",
-                "type" : "boolean"
-            }
-        },
-        "required": ["ID", "Name"]
-    };*/
-
     var myAt = Augmented.Presentation.DirectDOMAutomaticTable.extend({
         init: function() {
             this.on('tableEvent', this.fireMethod);
@@ -122,7 +83,6 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
     var at = new myAt({
         schema: "/example/data/tableSchema.json",
         el: "#autoTable",
-        //data: data,
         crossOrigin: false,
         sortable: true,
         lineNumbers: true,
@@ -151,8 +111,8 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
             this.on('bubbaEvent', this.bubba);
         },
         bubba: function(data) {
-            logger.debug("EXAMPLE: JSONView - Bubba proclaims: \"" + data + "\"");
-            alert("Bubba proclaims: \"" + data + "\"");
+            logger.debug("EXAMPLE: JSONView - Mediator says: \"" + data + "\"");
+            alert("Mediator says: \"" + data + "\"");
         },
         render: function() {
             logger.debug("EXAMPLE: JSONView - I got to render - " + this.$el + ", " + this.el);
@@ -197,7 +157,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
 
     var controlPanelView = Augmented.Presentation.Colleague.extend({
         el: "#controlPanel",
-        template: "<button id=\"ping\">Ping Bubba</button><button id=\"clear\">Clear Table</button><button id=\"fetch\">Fetch Table</button><button id=\"validate\">Validate Table</button>",
+        template: "<button id=\"ping\">Ping Mediator</button><button id=\"clear\">Clear Table</button><button id=\"fetch\">Fetch Table</button><button id=\"validate\">Validate Table</button>",
         events: {
             "click button#clear": function() {
                 this.sendMessage("tableEvent", "clear");
@@ -208,7 +168,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
                 //this.sendMessage("tableEvent", "refresh");
             },
             "click button#ping": function() {
-                this.sendMessage("bubbaEvent", "Ping!");
+                this.sendMessage("bubbaEvent", "Hello!");
             },
             "click button#validate": function() {
                 this.sendMessage("tableEvent", "validate");
@@ -247,7 +207,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
 
     var asyncQueue = new Augmented.Utility.AsynchronousQueue(1000);
     asyncQueue.process(
-        //at.render(),
+        at.render(),
         at.fetch(),
         jv.render(),
         cp.render()

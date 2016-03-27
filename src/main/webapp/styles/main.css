@@ -258,7 +258,7 @@ footer p a:link:hover {
 }
 
 /* Specific styles */
-
+/*
 h1 {
   color: #2196f3;
   font-weight: 400;
@@ -268,6 +268,40 @@ h2 {
   color: #4caf50;
   font-weight: 400;
 }
+*/
+h1 {
+    background-color: #2196f3;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 400;
+    margin: 0;
+    padding: 10px 15px 5px;
+}
+
+div#logo {
+    width: 85px;
+    height: 85px;
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    background: rgba(0, 0, 0, 0) url("../images/jensen-silo-circle-small.png") no-repeat scroll center center / 50% 50%;
+    opacity: 0.85;
+}
+
+h2 {
+    background-color: #2196f3;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 400;
+    margin: 0 0 2em;
+    padding: 0 15px 15px 15px;
+    border-bottom: 2px solid #01579b;
+}
+
+h3 {
+  color: #388e3c;
+  font-weight: 300;
+  margin: 0.3em 0 0;
+}
 
 main div.container {
   width: 768px;
@@ -276,87 +310,45 @@ main div.container {
   max-width: 85%;
 }
 
-main p.lead {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 18pt;
+hr {
+    border: 0;
+    border-top: 1px solid #546e7a;
+    margin-bottom: 25px;
+    margin-top: 10px;
 }
 
-main p.download {
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 20px;
-  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.40);
-  color: rgba(0, 0, 0, 0.85);
-  font-size: 18pt;
-  height: 40px;
-  line-height: 40px;
-  margin: 50px auto;
-  padding: 10px;
-  width: 256px;
+div#container {
+    margin: 15px;
 }
 
-main p.version {
-  color: rgba(0, 0, 0, 0.60);
-  font-size: 12pt;
+div#viewer {
+    color: #4caf50;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
-article#about h1,
-article#why h1 {
-  font-size: 24pt;
-  font-weight: 400;
-  text-align: center;
+div#controlPanel {
+    background-color: #eceff1;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
-article#about h2,
-article#why h2 {
-  font-size: 16pt;
-  text-align: left;
-  margin-bottom: 10px;
+button {
+    background-color: #cfd8dc;
+    color: rgba(0, 0, 0, 0.85);
+    border: 1px solid #607d8b;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
+    margin-right: 0;
+    margin-left: 10px;
+    padding: 5px;
 }
 
-figure img#module,
-figure img#mediator,
-article#why figure img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  height: 175px;
-}
-
-header figure {
-  width: 30px;
-  height: 40px;
-  margin: 0;
-  position: absolute;
-  right: 10px;
-  top: 55px;
-}
-
-header figure img {
-  width: 100%;
-  height: 100%;
-}
-
-article:not(:first-child):after {
-  display: block;
-  content: '';
-  width: 131px;
-  height: 15px;
-  background: rgba(0, 0, 0, 0) url("../images/triangle.png") no-repeat scroll center center;
-  background-size: cover;
-  -webkit-filter: sepia(100%);
-  filter: sepia(100%);
-  margin: 20px auto 0;
-}
-
-article#about p,
-article#why p {
-  text-indent: 2em;
-}
-
-article#about,
-article#why {
-  padding: 5px 25px 5px 25px;
+button:hover {
+    background-color: #eceff1;
 }
 
 /* iPhone 5/5s */
@@ -394,32 +386,6 @@ article#why {
     top: 40px;
     width: 25px;
   }
-
-  figure img#module,
-  figure img#mediator {
-    margin-left: auto;
-    margin-right: auto;
-    height: 150px;
-  }
-
-  div.container {
-    width: 100% !important;
-  }
-
-  main p.lead {
-    font-size: 11pt;
-    margin: 10px 0 33px 0;
-  }
-
-  article#about h1,
-  article#why h1 {
-    font-size: 20pt;
-  }
-
-  article#about h2,
-  article#why h2 {
-    font-size: 14pt;
-  }
 }
 
 /* iPhone 6 */
@@ -447,29 +413,5 @@ article#why {
 
   main header h2 {
     font-size: 14pt;
-  }
-
-  figure img#module,
-  figure img#mediator {
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  div.container {
-    width: 100% !important;
-  }
-
-  main p.lead {
-    font-size: 12pt;
-  }
-
-  article#about h1,
-  article#why h1 {
-    font-size: 24pt;
-  }
-
-  article#about h2,
-  article#why h2 {
-    font-size: 16pt;
   }
 }
