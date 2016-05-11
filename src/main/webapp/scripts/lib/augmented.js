@@ -96,7 +96,7 @@
      * @private
      * @memberof Augmented
      */
-    var $ = Augmented.$ = Backbone.$; // Does $ exist?
+    Augmented.$ = (Backbone.$) ? Backbone.$ : $; // Does $ exist?
 
     /**
      * Augmented.Configuration - a set of configuration properties for the framework
@@ -260,6 +260,12 @@
         return Augmented.isFunction(value) ? value.call(object) : value;
     };
 
+    // Polyfill for ES6 function
+    if (!Number.isInteger) {
+        Number.isInteger = function(value) {
+            return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
+        };
+    }
 
     if (!Array.prototype.includes) {
         /**
@@ -272,7 +278,6 @@
          * @returns true if property is included in an array
          */
         Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {
-            'use strict';
             var O = Object(this);
             var len = parseInt(O.length) || 0;
             if (len === 0) {
@@ -313,6 +318,23 @@
     };
 
     /**
+     * exec method - Execute a function by name
+     * @method exec
+     * @param {string} functionName The name of the function
+     * @param {object} context The context to call from
+     * @param (object) args Arguments
+     */
+    Augmented.exec = function(functionName, context /*, args */) {
+        var args = Array.prototype.slice.call(arguments, 2);
+        var namespaces = functionName.split(".");
+        var func = namespaces.pop();
+        for (var i = 0; i < namespaces.length; i++) {
+            context = context[namespaces[i]];
+        }
+        return context[func].apply(context, args);
+    };
+
+    /**
      * Utility Package -
      * Small Utilities
      * @namespace Augmented.Utility
@@ -321,6 +343,22 @@
     Augmented.Utility = {};
 
     Augmented.Utility.classExtend = classExtend;
+
+    /**
+     * Prints an object nicely
+     * @function PrettyPrint
+     * @namespace Augmented.Utility
+     * @param {object} obj The object to print
+     * @param {boolean} spaces Use spaces instead of tabs
+     * @returns {number} number The number of spaces to pad
+     */
+    Augmented.Utility.PrettyPrint = function(obj, spaces, number) {
+        var x = "\t";
+        if (spaces) {
+            x = " ".repeat(number);
+        }
+        return JSON.stringify(obj, null, x);
+    };
 
     /**
      * Sorts an array by key
@@ -616,6 +654,16 @@
                 xhr.setRequestHeader('Authorization', 'Basic ' + window.btoa(ajaxObject.user + ':' + ajaxObject.password));
             }
 
+            // custom headers
+
+            if (ajaxObject.headers) {
+                var i = 0, keys = Object.keys(ajaxObject.headers), l = keys.length;
+
+                for (i = 0; i < l; i++) {
+                    xhr.setRequestHeader(keys[i], ajaxObject.headers[keys[i]]);
+                }
+            }
+
     	    xhr.onload = function() {
                 try {
         		    if (xhr.status > 199 && xhr.status < 300) {
@@ -658,7 +706,10 @@
         		    }
                 } catch(e) {
                     logger.error("AUGMENTED: Ajax (" + e + ")");
-                    ajaxObject.error(xhr, xhr.status, xhr.statusText);
+                    if (ajaxObject && ajaxObject.error) {
+                        ajaxObject.error(xhr, xhr.status, xhr.statusText);
+                    }
+                    return xhr;
                 }
                 if (ajaxObject.complete) {
                     ajaxObject.complete(xhr, xhr.status);
@@ -1502,8 +1553,8 @@
     		";": true,
     		"?": true,
     		"&": true
-    	};
-    	var uriTemplateSuffices = {
+    	},
+        uriTemplateSuffices = {
     		"*": true
     	};
 
@@ -1597,8 +1648,9 @@
     			if (showVariables) {
     			    result += varSpec.name + "=";
     			}
-                var j=0, l = value.length;
-    			for (var j = 0; j < l; j++) {
+                var j = 0;
+                l = value.length;
+    			for (j = 0; j < l; j++) {
     			    if (j > 0) {
     				result += varSpec.suffices['*'] ? (separator || ",") : ",";
     				if (varSpec.suffices['*'] && showVariables) {
@@ -1821,9 +1873,9 @@
     	ValidatorContext.prototype.searchSchemas = function (schema, url) {
     	    if (Array.isArray(schema)) {
                 var i = 0, l = schema.length;
-    		for (i = 0; i < l; i++) {
-    		    this.searchSchemas(schema[i], url);
-    		}
+        		for (i = 0; i < l; i++) {
+        		    this.searchSchemas(schema[i], url);
+        		}
     	    } else if (schema && typeof schema === "object") {
     		if (typeof schema.id === "string") {
     		    if (isTrustedUrl(url, schema.id)) {
@@ -2084,13 +2136,13 @@
     	}
 
     	ValidatorContext.prototype.validateBasic = function validateBasic(data, schema, dataPointerPath) {
-    	    var error;
-    	    if (error = this.validateType(data, schema, dataPointerPath)) {
-    		return error.prefixWith(null, "type");
+    	    var error = this.validateType(data, schema, dataPointerPath);
+    	    if (error) {
+    		    return error.prefixWith(null, "type");
     	    }
-    	    if (error = this.validateEnum(data, schema, dataPointerPath)) {
-    		return error.prefixWith(null, "type");
-    	    }
+    	    /*if (error = this.validateEnum(data, schema, dataPointerPath)) {
+    		          return error.prefixWith(null, "type");
+    	    }*/
     	    return null;
     	};
 
@@ -2796,8 +2848,8 @@
     		try {
     		    throw err;
     		}
-    		catch(err) {
-    		    this.stack = err.stack || err.stacktrace;
+    		catch(err2) {
+    		    this.stack = err2.stack || err2.stacktrace;
     		}
     	    }
     	}
@@ -2998,431 +3050,11 @@
     };
     // End of TV4 fork, will provide base JSON-Schema Draft 4 support and then some
 
+    //var i18nBase = {};
 
-    /**
-     * <p>Fork of Jquery i18n plugin turned component<br/>
-     * Load and parse message bundle files (.properties), making bundles
-	 * keys available as javascript variables.</p>
-	 *
-	 * <p>i18n files are named <name>.js, or <name>_<language>.js or <name>_<language>_<country>.js
-	 * Where: The <language> argument is a valid ISO Language Code. These
-	 * codes are the lower-case, two-letter codes as defined by ISO-639. You
-	 * can find a full list of these codes at a number of sites, such as:
-	 * <em>http://www.loc.gov/standards/iso639-2/englangn.html</em> The <country>
-	 * argument is a valid ISO Country Code. These codes are the upper-case,
-	 * two-letter codes as defined by ISO-3166. You can find a full list of
-	 * these codes at a number of sites, such as:
-	 * <em>http://www.iso.ch/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1.html</em></p>
-	 *
-	 * <p>Sample usage for a bundles/Messages.properties bundle:
-	 * i18n.properties({ name: 'Messages', language: 'en_US', path:
-	 * 'bundles' });</p>
-     *
-     * @constructor i18nBase
-     * @private
-     */
-    var i18nBase = function() {
-    	var i18n = {};
-
-    	/** Map holding bundle keys (if mode: 'map') */
-    	i18n.map = {};
-
-    	/**
-    	 *
-         * @method properties
-         * @memberof i18nBase
-    	 *
-    	 * @param name
-    	 *                (string/string[], optional) names of file to load (eg,
-    	 *                'Messages' or ['Msg1','Msg2']). Defaults to "Messages"
-    	 * @param language
-    	 *                (string, optional) language/country code (eg, 'en',
-    	 *                'en_US', 'pt_PT'). if not specified, language reported
-    	 *                by the browser will be used instead.
-    	 * @param path
-    	 *                (string, optional) path of directory that contains
-    	 *                file to load
-    	 * @param mode
-    	 *                (string, optional) whether bundles keys are available
-    	 *                as JavaScript variables/functions or as a map (eg,
-    	 *                'vars' or 'map')
-    	 * @param cache
-    	 *                (boolean, optional) whether bundles should be cached
-    	 *                by the browser, or forcibly reloaded on each page
-    	 *                load. Defaults to false (i.e. forcibly reloaded)
-    	 * @param encoding
-    	 *                (string, optional) the encoding to request for
-    	 *                bundles. Property file resource bundles are specified
-    	 *                to be in ISO-8859-1 format. Defaults to UTF-8 for
-    	 *                backward compatibility.
-    	 * @param callback
-    	 *                (function, optional) callback function to be called
-    	 *                after script is terminated
-    	 */
-    	this.properties = function(settings) {
-    	    // set up settings
-    	    var defaults = {
-    		    name: Augmented.Configuration.MessageBundle,//'Messages',
-    		    language: '',
-    		    path: '',
-    		    mode: 'vars',
-    		    cache: false,
-    		    encoding: 'UTF-8',
-    		    callback: null
-    	    };
-    	    settings = Augmented.Utility.extend(defaults, settings);
-    	    if (settings.language === null || settings.language === '') {
-    		settings.language = browserLang();
-    	    }
-    	    if (settings.language === null) {
-    		settings.language = '';
-    	    }
-
-    	    // load and parse bundle files
-    	    var files = getFiles(settings.name);
-            var i = 0, l = files.length;
-    	    for (i = 0; i < l; i++) {
-    		// 1. load base (eg, Messages.properties)
-    		loadAndParseFile(settings.path + files[i] + '.properties', settings);
-    		// 2. with language code (eg, Messages_pt.properties)
-    		if (settings.language.length >= 2) {
-    		    loadAndParseFile(settings.path + files[i] + '_' + settings.language.substring(0, 2) + '.properties', settings);
-    		}
-    		// 3. with language code and country code (eg,
-    		// Messages_pt_PT.properties)
-    		if (settings.language.length >= 5) {
-    		    loadAndParseFile(settings.path + files[i] + '_' + settings.language.substring(0, 5) + '.properties', settings);
-    		}
-    	    }
-
-    	    // call callback
-    	    if (settings.callback) {
-    		settings.callback();
-    	    }
-    	};
-
-    	/**
-    	 * When configured with mode: 'map', allows access to bundle values by
-    	 * specifying its key. Eg, prop('com.company.bundles.menu_add')
-       * @method prop
-       * @memberof i18nBase
-    	 */
-    	this.prop = function(key /*
-    				     * Add parameters as function arguments as
-    				     * necessary
-    				     */) {
-    	    var value = i18n.map[key];
-    	    if (!value) {
-    		    return '[' + key + ']';
-            }
-
-    	    var phvList;
-    	    if (arguments.length == 2 && Array.isArray(arguments[1]))
-    		// An array was passed as the only parameter, so assume it is
-    		// the list of place holder values.
-    		phvList = arguments[1];
-
-    	    // Place holder replacement
-    	    /**
-    	     * Tested with: test.t1=asdf ''{0}'' test.t2=asdf '{0}'
-    	     * '{1}'{1}'zxcv test.t3=This is \"a quote" 'a''{0}''s'd{fgh{ij'
-    	     * test.t4="'''{'0}''" {0}{a} test.t5="'''{0}'''" {1} test.t6=a {1}
-    	     * b {0} c test.t7=a 'quoted \\ s\ttringy' \t\t x
-    	     *
-    	     * Produces: test.t1, p1 ==> asdf 'p1' test.t2, p1 ==> asdf {0}
-    	     * {1}{1}zxcv test.t3, p1 ==> This is "a quote" a'{0}'sd{fgh{ij
-    	     * test.t4, p1 ==> "'{0}'" p1{a} test.t5, p1 ==> "'{0}'" {1}
-    	     * test.t6, p1 ==> a {1} b p1 c test.t6, p1, p2 ==> a p2 b p1 c
-    	     * test.t6, p1, p2, p3 ==> a p2 b p1 c test.t7 ==> a quoted \ s
-    	     * tringy x
-    	     */
-
-    	    var i;
-    	    if (typeof(value) == 'string') {
-    		// Handle escape characters. Done separately from the tokenizing
-    		// loop below because escape characters are
-    		// active in quoted strings.
-    		i = 0;
-    		while ((i = value.indexOf('\\', i)) != -1) {
-    		    if (value.charAt(i + 1) == 't')
-    			value = value.substring(0, i) + '\t' + value.substring((i++) + 2); // tab
-    		    else if (value.charAt(i + 1) == 'r')
-    			value = value.substring(0, i) + '\r' + value.substring((i++) + 2); // return
-    		    else if (value.charAt(i + 1) == 'n')
-    			value = value.substring(0, i) + '\n' + value.substring((i++) + 2); // line
-    											    // feed
-    		    else if (value.charAt(i + 1) == 'f')
-    			value = value.substring(0, i) + '\f' + value.substring((i++) + 2); // form
-    											    // feed
-    		    else if (value.charAt(i + 1) == '\\')
-    			value = value.substring(0, i) + '\\' + value.substring((i++) + 2); // \
-    		    else
-    			value = value.substring(0, i) + value.substring(i + 1); // Quietly
-    										// drop
-    										// the
-    										// character
-    		}
-
-    		// Lazily convert the string to a list of tokens.
-    		var arr = [], j, index;
-    		i = 0;
-    		while (i < value.length) {
-    		    if (value.charAt(i) == '\'') {
-    			// Handle quotes
-    			if (i == value.length - 1)
-    			    value = value.substring(0, i); // Silently drop the
-    							    // trailing quote
-    			else if (value.charAt(i + 1) == '\'')
-    			    value = value.substring(0, i) + value.substring(++i); // Escaped
-    										    // quote
-    			else {
-    			    // Quoted string
-    			    j = i + 2;
-    			    while ((j = value.indexOf('\'', j)) != -1) {
-    				if (j == value.length - 1 || value.charAt(j + 1) != '\'') {
-    				    // Found start and end quotes. Remove them
-    				    value = value.substring(0, i) + value.substring(i + 1, j) + value.substring(j + 1);
-    				    i = j - 1;
-    				    break;
-    				}
-    				else {
-    				    // Found a double quote, reduce to a single
-    				    // quote.
-    				    value = value.substring(0, j) + value.substring(++j);
-    				}
-    			    }
-
-    			    if (j == -1) {
-    				// There is no end quote. Drop the start quote
-    				value = value.substring(0, i) + value.substring(i + 1);
-    			    }
-    			}
-    		    }
-    		    else if (value.charAt(i) == '{') {
-    			// Beginning of an unquoted place holder.
-    			j = value.indexOf('}', i + 1);
-    			if (j == -1)
-    			    i++; // No end. Process the rest of the line.
-    				    // Java would throw an exception
-    			else {
-    			    // Add 1 to the index so that it aligns with the
-    			    // function arguments.
-    			    index = parseInt(value.substring(i + 1, j));
-    			    if (!isNaN(index) && index >= 0) {
-    				// Put the line thus far (if it isn't empty)
-    				// into the array
-    				var s = value.substring(0, i);
-    				if (s !== "")
-    				    arr.push(s);
-    				// Put the parameter reference into the array
-    				arr.push(index);
-    				// Start the processing over again starting from
-    				// the rest of the line.
-    				i = 0;
-    				value = value.substring(j + 1);
-    			    }
-    			    else
-    				i = j + 1; // Invalid parameter. Leave as is.
-    			}
-    		    }
-    		    else
-    			i++;
-    		}
-
-    		// Put the remainder of the no-empty line into the array.
-    		if (value !== "")
-    		    arr.push(value);
-    		value = arr;
-
-    		// Make the array the value for the entry.
-    		i18n.map[key] = arr;
-    	    }
-
-    	    if (value.length === 0)
-    		return "";
-    	    if (value.lengh == 1 && typeof(value[0]) == "string")
-    		return value[0];
-
-    	    var s = "";
-            var l = value.length;
-    	    for (i = 0; i < l; i++) {
-    		if (typeof(value[i]) == "string")
-    		    s += value[i];
-    		// Must be a number
-    		else if (phvList && value[i] < phvList.length)
-    		    s += phvList[value[i]];
-    		else if (!phvList && value[i] + 1 < arguments.length)
-    		    s += arguments[value[i] + 1];
-    		else
-    		    s += "{" + value[i] + "}";
-    	    }
-
-    	    return s;
-    	};
-
-    	/*
-       * Language reported by browser, normalized code
-       */
-    	function browserLang() {
-    	    return normaliseLanguageCode(navigator.language /* Mozilla */ || navigator.userLanguage /* IE */);
-    	}
-
-    	/** Load and parse .properties files
-       * @method loadAndParseFile
-       * @memberof i18nBase
-       * @param filename
-       * @param settings
-       */
-    	function loadAndParseFile(filename, settings) {
-    	    Augmented.ajax({
-    		url: filename,
-    		async: false,
-    		cache: settings.cache,
-    		contentType: 'text/plain;charset=' + settings.encoding,
-    		dataType: 'text',
-    		success: function (data, status) {
-    		    parseData(data, settings.mode);
-    		}
-    	    });
-    	}
-
-    	/*
-       * Parse .properties files
-       */
-    	function parseData(data, mode) {
-    	    var parsed = '';
-    	    var parameters = data.split(/\n/);
-    	    var regPlaceHolder = /(\{\d+\})/g;
-    	    var regRepPlaceHolder = /\{(\d+)\}/g;
-    	    var unicodeRE = /(\\u.{4})/ig;
-            var i = 0, l = parameters.length;
-    	    for (i = 0; i < l; i++) {
-    		parameters[i] = parameters[i].replace(/^\s\s*/, '').replace(/\s\s*$/, ''); // trim
-    		if (parameters[i].length > 0 && parameters[i].match("^#") != "#") { // skip
-    										    // comments
-    		    var pair = parameters[i].split('=');
-    		    if (pair.length > 0) {
-    			/** Process key & value */
-    			var name = unescape(pair[0]).replace(/^\s\s*/, '').replace(/\s\s*$/, ''); // trim
-    			var value = pair.length == 1 ? "" : pair[1];
-    			// process multi-line values
-    			while (value.match(/\\$/) == "\\") {
-    			    value = value.substring(0, value.length - 1);
-    			    value += parameters[++i].replace(/\s\s*$/, ''); // right
-    									    // trim
-    			}
-    			// Put values with embedded '='s back together
-    			for (var s = 2; s < pair.length; s++) {
-    			    value += '=' + pair[s];
-    			}
-    			value = value.replace(/^\s\s*/, '').replace(/\s\s*$/, ''); // trim
-
-    			/** Mode: bundle keys in a map */
-    			if (mode == 'map' || mode == 'both') {
-    			    // handle unicode chars possibly left out
-    			    var unicodeMatches = value.match(unicodeRE);
-    			    if (unicodeMatches) {
-    				for (var u = 0; u < unicodeMatches.length; u++) {
-    				    value = value.replace(unicodeMatches[u], unescapeUnicode(unicodeMatches[u]));
-    				}
-    			    }
-    			    // add to map
-    			    i18n.map[name] = value;
-    			}
-
-    			/* Mode: bundle keys as vars/functions */
-    			if (mode == 'vars' || mode == 'both') {
-    			    value = value.replace(/"/g, '\\"'); // escape quotation mark
-
-    			    // make sure namespaced key exists (eg, some.key')
-    			    checkKeyNamespace(name);
-
-    			    // value with variable substitutions
-    			    if (regPlaceHolder.test(value)) {
-    				var parts = value.split(regPlaceHolder);
-    				// process function args
-    				var first = true;
-    				var fnArgs = '';
-    				var usedArgs = [];
-    				for (var p = 0; p < parts.length; p++) {
-    				    if (regPlaceHolder.test(parts[p]) && (usedArgs.length === 0 || usedArgs.indexOf(parts[p]) === -1)) {
-    					if (!first) {
-    					    fnArgs += ',';
-    					}
-    					fnArgs += parts[p].replace(regRepPlaceHolder, 'v$1');
-    					usedArgs.push(parts[p]);
-    					first = false;
-    				    }
-    				}
-    				parsed += name + '=function(' + fnArgs + '){';
-    				// process function body
-    				var fnExpr = '"' + value.replace(regRepPlaceHolder, '"+v$1+"') + '"';
-    				parsed += 'return ' + fnExpr + ';' + '};';
-
-    				// simple value
-    			    } else {
-    				parsed += name + '="' + value + '";';
-    			    }
-    			} // END: Mode: bundle keys as vars/functions
-    		    } // END: if(pair.length > 0)
-    		} // END: skip comments
-    	    }
-    	    eval(parsed);
-    	}
-
-    	/** Make sure namespace exists (for keys with dots in name) */
-    	// TODO key parts that start with numbers quietly fail. i.e.
-    	// month.short.1=Jan
-    	function checkKeyNamespace(key) {
-    	    var regDot = /\./;
-    	    if (regDot.test(key)) {
-    		var fullname = '';
-    		var names = key.split(/\./);
-    		for (var i = 0; i < names.length; i++) {
-    		    if (i > 0) {
-    			fullname += '.';
-    		    }
-    		    fullname += names[i];
-    		    if (eval('typeof ' + fullname + ' == "undefined"')) {
-    			eval(fullname + '={};');
-    		    }
-    		}
-    	    }
-    	}
-
-    	/* Make sure filename is an array */
-    	function getFiles(names) {
-    	    return (names && names.constructor == Array) ? names : [names];
-    	}
-
-    	/* Ensure language code is in the format aa_AA. */
-    	function normaliseLanguageCode(lang) {
-    	    lang = lang.toLowerCase();
-    	    if (lang.length > 3) {
-    		lang = lang.substring(0, 3) + lang.substring(3).toUpperCase();
-    	    }
-    	    return lang;
-    	}
-
-    	/* Unescape unicode chars ('\u00e3') */
-    	function unescapeUnicode(str) {
-    	    // unescape unicode codes
-    	    var codes = [];
-    	    var code = parseInt(str.substr(2), 16);
-    	    if (code >= 0 && code < Math.pow(2, 16)) {
-    		codes.push(code);
-    	    }
-    	    // convert codes to text
-    	    var unescaped = '';
-    	    for (var i = 0; i < codes.length; ++i) {
-    		unescaped += String.fromCharCode(codes[i]);
-    	    }
-    	    return unescaped;
-    	}
-    };
 
     /* Assign an object if null */
-    var resourceBundle = (!resourceBundle) ? new i18nBase() : resourceBundle;
+    //var resourceBundle = (!resourceBundle) ? new i18nBase() : resourceBundle;
 
     /**
      * ResourceBundle Object used for configuration of a bundle
@@ -3433,7 +3065,7 @@
      * @property {string} mode Bundlefile type (default: both)
      * @property {boolean} cache Cache reading from bundle (default: true)
      */
-    var bundleObject = Augmented.Utility.BundleObject = {
+    Augmented.Utility.BundleObject = {
         name: '',
         mode: 'both',
         cache: true
@@ -3454,7 +3086,7 @@
          * @returns {object} returns a bundle
          */
 	    getBundle: function() {
-		    return resourceBundle.properties.apply(this, arguments);
+		    return {};//resourceBundle.properties.apply(this, arguments);
 	    },
 
         /**
@@ -3463,7 +3095,7 @@
          * @memberof Augmented.Utility.ResourceBundle
          */
 	    getString: function() {
-		    return resourceBundle.prop.apply(this, arguments);
+		    return "";//resourceBundle.prop.apply(this, arguments);
 	    }
     };
 
@@ -3546,6 +3178,36 @@
 	    }
     };
 
+    var schemaGenerator = function(data) {
+        var obj = {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "title": "model",
+            "description": "Generated Schema",
+            "type": "object",
+            "properties": { }
+        };
+
+        var i, d, dkey, p, keys = Object.keys(data), l = keys.length;
+        for (i = 0; i < l; i++) {
+            d = keys[i];
+            for (dkey in d) {
+                if (d.hasOwnProperty(dkey)) {
+                    p = obj.properties[d] = {};
+
+                    var t = (typeof data[d]);
+                    if (t === "object") {
+                        t = (Array.isArray(data[d])) ? "array" : "object";
+                    } else if (t === "number") {
+                        t = (Number.isInteger(data[d])) ? "integer" : "number";
+                    }
+                    p.type = t;
+                    p.description = String(d);
+                }
+            }
+        }
+        return obj;
+    };
+
     /**
      * Augmented.ValidationFramework -
      * The Validation Framework Base Wrapper Class.
@@ -3624,6 +3286,14 @@
     	this.getValidationMessages = function() {
     	    return myValidator.error;
     	};
+
+        this.generateSchema = function(model) {
+            if (model && model instanceof Augmented.Model) {
+                return schemaGenerator(model.toJSON());
+            }
+
+            return schemaGenerator(model);
+        };
     };
 
     Augmented.ValidationFramework = (!Augmented.ValidationFramework) ? new validationFramework() : Augmented.ValidationFramework;
@@ -3732,7 +3402,19 @@
 
             var ret = Augmented.sync(method, model, options);
     	    return ret;
-    	}
+    	},
+        /**
+         * Model.reset - clear and rewrite the model with passed data
+         * @method reset
+         * @memberof Augmented.Model
+         * @param {object} data The data to replace the model with (optional)
+         */
+        reset: function(data) {
+            this.clear();
+            if (data) {
+                this.set(data);
+            }
+        }
     });
 
     // Extend Model with Object base functions
@@ -4137,6 +3819,7 @@
          * @returns {Augmented.View} Returns 'this,' as in, this view context
          */
         initialize: function(options) {
+            this.options = options;
             this.init(options);
             this.render = Augmented.Utility.wrap(this.render, function(render) {
                 this.beforeRender();
@@ -4336,7 +4019,24 @@
      * @extends Backbone.Router
      * @memberof Augmented
      */
-    Augmented.Router = Backbone.Router;
+    Augmented.Router = Backbone.Router.extend({
+        /**
+         * Load a view safely and remove the last view by calling cleanup, then remove
+         * @method loadView
+         * @param {Augmented.View} view The View to load
+         * @memberof Augmented
+         */
+        loadView: function(view) {
+            if (this._view) {
+                if (this._view.cleanup) {
+                    this._view.cleanup();
+                }
+                this._view.remove();
+            }
+    		this._view = view;
+            this._view.render();
+    	}
+    });
 
     Augmented.Object.extend = Augmented.Model.extend = Augmented.Collection.extend = Augmented.Router.extend = Augmented.View.extend = Augmented.History.extend = Augmented.extend;
 
@@ -4460,11 +4160,6 @@
     	    return (ls && ls.isSupported());
     	};
 
-    	// true = localStorage, false = sessionStorage
-    	if (this.isSupported() && this.namespace) {
-    	    ls.setItem(this.namespace, JSON.stringify(this.myNameSpacedStore.toJSON()));
-    	}
-
     	this.getItem = function(itemKey) {
             var map = {};
             try {
@@ -4520,6 +4215,13 @@
     	this.length = function() {
     	    return this.myNameSpacedStore.size();
     	};
+
+        // true = localStorage, false = sessionStorage
+        if (this.isSupported() && this.namespace && !persist) {
+            ls.setItem(this.namespace, JSON.stringify(this.myNameSpacedStore.toJSON()));
+        } else if (this.isSupported() && this.namespace && persist) {
+            this.getItem(this.namespace);
+        }
     };
 
     /**
@@ -4765,7 +4467,7 @@
                 Augmented.Utility.extend(this.queue, arguments);
             }
             var args = this.queue;
-            var l = args.length;
+            var l = Object.keys(args).length;//args.length;
             if (l <= 0) {
                 return false;
             }
@@ -4810,7 +4512,15 @@
      * app.start();
      */
     var application = Augmented.Application = function(name) {
-		var metadata;
+		var metadata, routers = [];
+
+        /**
+         * The router property of the view
+         * @property router
+         * @memberof Augmented.Application
+         */
+        this.router = null;
+
         /**
          * The started property of the view
          * @property started
@@ -4838,6 +4548,7 @@
         this.initialize = function() {
 
         };
+
         /** Event for before the startup of the application
          * @method beforeInitialize
          * @memberof Augmented.Application
@@ -4845,6 +4556,7 @@
         this.beforeInitialize = function() {
 
         };
+
         /** Event for after the startup of the application
          * @method afterInitialize
          * @memberof Augmented.Application
@@ -4894,6 +4606,16 @@
 			return metadata.get(key);
 		};
 
+        /** Register a Router - adds routes to the application
+         * @method registerRouter
+         * @memberof Augmented.Application
+         */
+        this.registerRouter = function(router) {
+            if (router && routers) {
+                routers.push(router);
+            }
+        };
+
         /** Event to start the application and history
          * @method start
          * @memberof Augmented.Application
@@ -4905,10 +4627,16 @@
                     Augmented.history.start();
                 }
             };
+            var routerStarter = function() {
+                if (routers && routers.length > 0) {
+
+                }
+            };
             this.started = asyncQueue.process(
                 this.beforeInitialize(),
                 this.initialize(),
                 this.afterInitialize(),
+                //routerStarter(),
                 startCheck()
             );
             if (!this.started) {

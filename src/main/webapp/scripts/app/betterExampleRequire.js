@@ -2,17 +2,17 @@ require.config({
 	'baseUrl': 'scripts/',
 
     'paths': {
-		'jquery': 'lib/jquery-2.1.4.min',
+		'jquery': 'lib/jquery.min',
 		'underscore': 'lib/lodash.min',
 		'backbone': 'lib/backbone-min',
 
         // hosted version
-		'augmented': '/augmented/scripts/core/augmented',
-        'augmentedPresentation': '/augmented/scripts/presentation/augmentedPresentation'
+		//'augmented': '/augmented/scripts/core/augmented',
+        //'augmentedPresentation': '/augmented/scripts/presentation/augmentedPresentation'
 
         // local version
-		//'augmented': 'lib/augmented/augmented-min',
-        //'augmentedPresentation': 'lib/augmented/augmentedPresentation-min'
+		'augmented': 'lib/augmented/augmented-min',
+        'augmentedPresentation': 'lib/augmented/augmentedPresentation-min'
 	}
 });
 
