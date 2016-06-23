@@ -7,21 +7,19 @@ require.config({
 		'backbone': 'lib/backbone-min',
 
         // hosted version
-		//'augmented': '/augmented/scripts/core/augmented',
-        //'augmentedPresentation': '/augmented/scripts/presentation/augmentedPresentation'
+		'augmented': '/augmented/scripts/core/augmented',
+        'augmentedPresentation': '/augmented/scripts/presentation/augmentedPresentation'
 
         // local version
-		'augmented': 'lib/augmented/augmented-min',
-        'augmentedPresentation': 'lib/augmented/augmentedPresentation-min'
+		//'augmented': 'lib/augmented/augmented-min',
+        //'augmentedPresentation': 'lib/augmented/augmentedPresentation-min'
 	}
 });
 
 require(['augmented', 'augmentedPresentation'], function(Augmented) {
 	var app = new Augmented.Presentation.Application("Example");
     // async calls to inject CSS and Fonts
-    app.registerStylesheet("https://fonts.googleapis.com/css?family=Work+Sans:300,400");
-    app.registerStylesheet("styles/main.css");
-    app.registerStylesheet("styles/table.css");
+    app.registerStylesheet("https://fonts.googleapis.com/css?family=Roboto:400,300,100");
     // get history going
 	app.start();
 
@@ -68,7 +66,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
         }
     });
 
-    var myAt = Augmented.Presentation.DirectDOMAutomaticTable.extend({
+    var myAt = Augmented.Presentation.AutomaticTable.extend({
         init: function() {
             this.on('tableEvent', this.fireMethod);
         },
@@ -81,13 +79,13 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
     });
 
     var at = new myAt({
-        schema: "/example/data/tableSchema.json",
+        schema: "/autotable/data/tableSchema.json",
         el: "#autoTable",
         crossOrigin: false,
         sortable: true,
         lineNumbers: true,
         editable: true,
-        uri: "/example/data/table.json"
+        uri: "/autotable/data/table.json"
     });
 
     var view = new mainView();
