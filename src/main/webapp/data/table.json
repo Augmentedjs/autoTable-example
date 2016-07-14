@@ -6,5 +6,6 @@
  { "Name": "Anna", "ID": 678, "Email": "anna@augmentedjs.org", "Role": "Developer", "Active": false },
  { "Name": "Joni", "ID": 789, "Email": "joni@augmentedjs.org", "Role": "UX Designer", "Active": false },
  { "Name": "Divya", "ID": 890, "Email": "divya@augmentedjs.org", "Role": "QE", "Active": false },
- { "Name": "Michael", "ID": 901, "Email": "michael@augmentedjs.org", "Role": "Operations", "Active": false }
+ { "Name": "Michael", "ID": 901, "Email": "michael@augmentedjs.org", "Role": "Operations", "Active": false },
+ { "Name": "Alissa", "ID": 1012, "Email": "alissa@augmentedjs.org", "Role": "Developer", "Active": true }
 ]
