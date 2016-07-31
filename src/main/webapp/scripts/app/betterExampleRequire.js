@@ -11,8 +11,8 @@ require.config({
         //'augmentedPresentation': '/augmented/scripts/presentation/augmentedPresentation'
 
         // local version
-		'augmented': 'lib/augmented/augmented-min',
-        'augmentedPresentation': 'lib/augmented/augmentedPresentation-min'
+		'augmented': 'lib/augmented',
+        'augmentedPresentation': 'lib/augmentedPresentation'
 	}
 });
 
@@ -27,7 +27,8 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
 
     var mainView = Augmented.Presentation.Mediator.extend({
         el: "#main",
-        template: "<div id=\"logo\"></div><h1>Augmented Automatic Table</h1><h2><em>JSON-Schema</em> powered presentation</h2><div id=\"container\"><div id=\"autoTable\"></div><div id=\"viewer\"></div><div id=\"controlPanel\"><div></div>",
+        //template: "<div id=\"logo\"></div><h1>Augmented Automatic Table</h1><h2><em>JSON-Schema</em> powered presentation</h2><div id=\"container\"><div id=\"autoTable\"></div><div id=\"viewer\"></div><div id=\"controlPanel\"><div></div>",
+        template: "<div id=\"container\"><div id=\"autoTable\"></div><div id=\"viewer\"></div><div id=\"controlPanel\"><div></div>",
         events: {
             "click div#logo": function() {
                 window.location = "http://www.augmentedjs.com";
@@ -78,8 +79,40 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
         }
     });
 
+    var schema = {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "User",
+        "description": "A list of users",
+        "type": "object",
+        "properties": {
+            "Name" : {
+                "description": "Name of the user",
+                "type" : "string"
+            },
+            "ID" : {
+                "description": "The unique identifier for a user",
+                "type" : "integer"
+            },
+            "Email" : {
+                "description": "The email of the user",
+                "type" : "string",
+                "format": "email"
+            },
+            "Role" : {
+                "description": "The role of the user",
+                "type": "string",
+                "enum": [null, "Architect", "Developer", "Tech Lead", "Product Owner", "UX Designer", "QE", "Operations"]
+            },
+            "Active" : {
+                "description": "Is the user Active",
+                "type" : "boolean"
+            }
+        },
+        "required": ["Name", "ID"]
+    };
+
     var at = new myAt({
-        schema: "/autotable/data/tableSchema.json",
+        schema: schema,//"/autotable/data/tableSchema.json",
         el: "#autoTable",
         crossOrigin: false,
         sortable: true,
@@ -87,6 +120,7 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
         editable: true,
         uri: "/autotable/data/table.json"
     });
+
 
     var view = new mainView();
     view.render(); // need to render so the subviews have something to anchor off of
@@ -203,11 +237,15 @@ require(['augmented', 'augmentedPresentation'], function(Augmented) {
     jv.data = c;
     logger.debug("EXAMPLE: Main View (Mediator) is observing in these channels: " + c);
 
-    var asyncQueue = new Augmented.Utility.AsynchronousQueue(1000);
+    at.render();
+
+    at.setTheme("material");
+    at.fetch();
+    jv.render();
+    cp.render();
+
+    /*var asyncQueue = new Augmented.Utility.AsynchronousQueue(1000);
     asyncQueue.process(
-        at.render(),
-        at.fetch(),
-        jv.render(),
-        cp.render()
-    );
+
+    );*/
 });

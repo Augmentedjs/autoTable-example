@@ -13,7 +13,7 @@
  *
  * @requires augmented.js
  * @module Augmented.Presentation
- * @version 0.3.0
+ * @version 0.4.0
  * @license Apache-2.0
  */
 (function(moduleFactory) {
@@ -413,7 +413,7 @@
             		}
                 } else {
                     logger.warn("AUGMENTED: Mediator: No subscription for channel '" + channel + "' on row " + i);
-                    logger.debug("AUGMENTED: Mediator: subscription " + this._channels[channel]);
+                    //logger.debug("AUGMENTED: Mediator: subscription " + this._channels[channel]);
                 }
     	    }
     	},
@@ -1797,7 +1797,7 @@
                     cobj = (columns[dkey]) ? columns[dkey] : {};
                     dobj = d[dkey];
 
-                    logger.debug("column type: " + JSON.stringify(cobj));
+                    //logger.debug("column type: " + JSON.stringify(cobj));
 
                     t = (typeof dobj);
 
@@ -2078,6 +2078,7 @@
      * Shorthand for Augmented.Presentation.AutomaticTable
      * @constructor Augmented.Presentation.AutoTable
      * @extends Augmented.Presentation.AutomaticTable
+     * @memberof Augmented.Presentation
      */
     Augmented.Presentation.AutoTable = Augmented.Presentation.AutomaticTable;
 
@@ -2085,7 +2086,8 @@
      * Augmented.Presentation.BigDataTable
      * Instance class preconfigured for sorting and pagination
      * @constructor Augmented.Presentation.BigDataTable
-     * @extends Augmented.Presentation.DirectDOMAutomaticTable
+     * @extends Augmented.Presentation.AutomaticTable
+     * @memberof Augmented.Presentation
      */
     Augmented.Presentation.BigDataTable = Augmented.Presentation.DirectDOMAutomaticTable.extend({
         renderPaginationControl: true,
@@ -2097,7 +2099,8 @@
      * Augmented.Presentation.EditableTable
      * Instance class preconfigured for editing
      * @constructor Augmented.Presentation.EditableTable
-     * @extends Augmented.Presentation.DirectDOMAutomaticTable
+     * @extends Augmented.Presentation.AutomaticTable
+     * @memberof Augmented.Presentation
      */
     Augmented.Presentation.EditableTable = Augmented.Presentation.DirectDOMAutomaticTable.extend({
         editable: true,
@@ -2108,7 +2111,8 @@
      * Augmented.Presentation.EditableBigDataTable
      * Instance class preconfigured for editing, sorting, and pagination
      * @constructor Augmented.Presentation.EditableBigDataTable
-     * @extends Augmented.Presentation.DirectDOMAutomaticTable
+     * @extends Augmented.Presentation.AutomaticTable
+     * @memberof Augmented.Presentation
      */
     Augmented.Presentation.EditableBigDataTable = Augmented.Presentation.DirectDOMAutomaticTable.extend({
         renderPaginationControl: true,
@@ -2121,7 +2125,8 @@
      * Augmented.Presentation.LocalStorageTable
      * Instance class preconfigured for local storage-based table
      * @constructor Augmented.Presentation.LocalStorageTable
-     * @extends Augmented.Presentation.DirectDOMAutomaticTable
+     * @extends Augmented.Presentation.AutomaticTable
+     * @memberof Augmented.Presentation
      */
     Augmented.Presentation.LocalStorageTable = Augmented.Presentation.DirectDOMAutomaticTable.extend({
         renderPaginationControl: false,
@@ -2135,7 +2140,8 @@
      * Augmented.Presentation.EditableLocalStorageTable
      * Instance class preconfigured for editing, sorting, from local storage
      * @constructor Augmented.Presentation.EditableLocalStorageTable
-     * @extends Augmented.Presentation.DirectDOMAutomaticTable
+     * @extends Augmented.Presentation.AutomaticTable
+     * @memberof Augmented.Presentation
      */
     Augmented.Presentation.EditableLocalStorageTable = Augmented.Presentation.DirectDOMAutomaticTable.extend({
         renderPaginationControl: false,
@@ -2149,15 +2155,24 @@
      * Augmented.Presentation.Spreadsheet
      * Instance class preconfigured for editing for use as a Spreadsheet.<br/>
      * If a propery for length is not specified, it will buffer 10 lines for editing.
-     * @constructor Augmented.Presentation.EditableLocalStorageTable
-     * @extends Augmented.Presentation.DirectDOMAutomaticTable
+     * @constructor Augmented.Presentation.Spreadsheet
+     * @extends Augmented.Presentation.AutomaticTable
+     * @memberof Augmented.Presentation
      */
-    Augmented.Presentation.Spreadsheet = Augmented.Presentation.DirectDOMAutomaticTable.extend({
+    Augmented.Presentation.Spreadsheet = Augmented.Presentation.AutomaticTable.extend({
         renderPaginationControl: false,
         lineNumbers: true,
         sortable: true,
         editable: true,
+        /**
+         * @propery {number} columns Defines a set of columns in the spreadsheet
+         * @memberof Augmented.Presentation.AutomaticTable
+         */
         columns: 5,
+        /**
+         * @propery {number} rows Defines a set of rows in the spreadsheet
+         * @memberof Augmented.Presentation.AutomaticTable
+         */
         rows: 10,
         /**
          * Initialize the table view
@@ -2820,7 +2835,7 @@
             }
             this.model.set(( (key) ? key : event.currentTarget.name ), val);
             this._func(event);
-            logger.debug("AUGMENTED: DecoratorView updated Model: " + JSON.stringify(this.model.toJSON()));
+            //logger.debug("AUGMENTED: DecoratorView updated Model: " + JSON.stringify(this.model.toJSON()));
         },
         _click: function(event) {
             var func = event.currentTarget.getAttribute(decoratorAttributeEnum.click);
@@ -3610,67 +3625,49 @@
          * @returns {object} Returns the view context ('this')
          */
          render: function() {
-             if (!this.isInitalized) {
-                 logger.warn("AUGMENTED: AutoForm Can't render yet, not initialized!");
-                 return this;
-             }
-             var e;
-             /*if (this.template) {
-                // refresh the form body only
-                this.showProgressBar(true);
-                if (this.el) {
-                    e = Augmented.Presentation.Dom.selector(this.el);
-                    var formset = e.querySelector("formset");
-                    if (e) {
-                        logger.debug("AUGMENTED: AutoForm fields " + JSON.stringify(this._fields));
+            if (!this.isInitalized) {
+                logger.warn("AUGMENTED: AutoForm Can't render yet, not initialized!");
+                return this;
+            }
 
+            this.template = null;//"notused";
+            this.showProgressBar(true);
 
+            if (this.el) {
+                var e = Augmented.Presentation.Dom.selector(this.el);
+                if (e) {
+                    // progress bar
+                    var n = document.createElement("progress");
+                    var t = document.createTextNode("Please wait.");
+                    n.appendChild(t);
+                    e.appendChild(n);
 
-                    }
-                } else if (this.$el) {
-                    logger.warn("AUGMENTED: AutoForm doesn't support jquery, sorry, not rendering.");
-                } else {
-                    logger.warn("AUGMENTED: AutoForm no element anchor, not rendering.");
+                    // the form
+                    formCompile(e, this.name, this.description, this._fields, this.model.toJSON(), this._required, this.name);
+
+                    this._formEl = Augmented.Presentation.Dom.query("form", this.el);
+
+                    // message
+                    n = document.createElement("p");
+                    n.classList.add("message");
+                    e.appendChild(n);
                 }
-            } else {*/
-                this.template = null;//"notused";
-                this.showProgressBar(true);
+            } else if (this.$el) {
+                logger.warn("AUGMENTED: AutoForm doesn't support jquery, sorry, not rendering.");
+                this.showProgressBar(false);
+                return;
+            } else {
+                logger.warn("AUGMENTED: AutoForm no element anchor, not rendering.");
+                this.showProgressBar(false);
+                return;
+            }
 
-                if (this.el) {
-                    e = Augmented.Presentation.Dom.selector(this.el);
-                    if (e) {
-                        // progress bar
-                        var n = document.createElement("progress");
-                        var t = document.createTextNode("Please wait.");
-                        n.appendChild(t);
-                        e.appendChild(n);
+            this.delegateEvents();
 
-                        // the form
-                        formCompile(e, this.name, this.description, this._fields, this.model.toJSON(), this._required, this.name);
+            this.syncAllBoundElements();
 
-                        this._formEl = Augmented.Presentation.Dom.query("form", this.el);
-
-                        // message
-                        n = document.createElement("p");
-                        n.classList.add("message");
-                        e.appendChild(n);
-                    }
-                } else if (this.$el) {
-                    logger.warn("AUGMENTED: AutoForm doesn't support jquery, sorry, not rendering.");
-                    this.showProgressBar(false);
-                    return;
-                } else {
-                    logger.warn("AUGMENTED: AutoForm no element anchor, not rendering.");
-                    this.showProgressBar(false);
-                    return;
-                }
-             //}
-             this.delegateEvents();
-
-             this.syncAllBoundElements();
-
-             this.showProgressBar(false);
-             return this;
+            this.showProgressBar(false);
+            return this;
          },
          reset: function() {
             if (this._formEl) {

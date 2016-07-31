@@ -12,8 +12,7 @@
 
     // Set up Augmented appropriately for the environment. Start with AMD.
     if (typeof define === 'function' && define.amd) {
-        define([ 'backbone', 'exports'],
-		function(Backbone, exports) {
+        define([ 'backbone', 'exports'], function(Backbone, exports) {
 	    // Export global even in AMD case in case this script is
 	    // loaded with
 	    // others that may still expect a global Augmented.
@@ -22,9 +21,8 @@
 
 	// Next for Node.js or CommonJS.
     } else if (typeof exports !== 'undefined') {
-	    var _ = require('backbone');
-	factory(root, exports, Backbone);
-
+	    var Backbone = require('backbone');
+	    factory(root, exports, Backbone);
 	// Finally, as a browser global.
     } else {
 	    root.Augmented = factory(root, {}, root.Backbone);
@@ -56,7 +54,7 @@
      * The standard version property
      * @constant VERSION
      */
-    Augmented.VERSION = '0.4.0α';
+    Augmented.VERSION = '0.4.0';
     /**
      * A codename for internal use
      * @constant codename
@@ -270,7 +268,7 @@
          * @function Array.find
          * @memberof Array
          * @param {object} predicate Function to execute on each value in the array, taking three arguments:
-         * @param {object++} args Optional. Object to use as this when executing callback.
+         * @param {object} args Optional. Object to use as this when executing callback.
          * @returns Returns value in the array
          * @example arr.find(callback[, thisArg]);
          * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find#Polyfill
@@ -602,6 +600,9 @@
      */
     Augmented.Utility.extend = extend;
 
+    // For Node and Browser.  Requires xhr2 for Node (install in Node or by app)
+    //var XMLHttpRequest = (XMLHttpRequest) ? XMLHttpRequest : require('xhr2');
+
     /*
      * Setup the rest of jQuery-like eventing and handlers for native xhr
      */
@@ -807,7 +808,7 @@
      *     });
      */
     Augmented.ajax = Augmented.Ajax.ajax = function(ajaxObject) {
-        logger.debug("AUGMENTED: Ajax object: " + JSON.stringify(ajaxObject));
+        //logger.debug("AUGMENTED: Ajax object: " + JSON.stringify(ajaxObject));
         var xhr = null;
   		if (ajaxObject && ajaxObject.url) {
     	    var method = (ajaxObject.method) ? ajaxObject.method : 'GET';
@@ -889,10 +890,10 @@
                                 }
                             } else if (xhr.responseType === "json") {
                                 if (xhr.response) {
-                                    logger.debug("AUGMENTED: Ajax (JSON responseType) native JSON.");
+                                    //logger.debug("AUGMENTED: Ajax (JSON responseType) native JSON.");
                                     ajaxObject.success(xhr.response, xhr.status, xhr);
                                 } else if (xhr.responseText) {
-                                    logger.debug("AUGMENTED: Ajax (JSON responseType) parsed JSON from string.");
+                                    //logger.debug("AUGMENTED: Ajax (JSON responseType) parsed JSON from string.");
                                     ajaxObject.success(JSON.parse(xhr.responseText), xhr.status, xhr);
                                 } else {
                                     logger.warn("AUGMENTED: Ajax (" + xhr.responseType + " responseType) did not return anything.");
@@ -978,10 +979,10 @@
      * @memberof Augmented.Logger
      */
     Augmented.Logger.Level = {
-        info: "info",
+        info:  "info",
         debug: "debug",
         error: "error",
-        warn: "warn"
+        warn:  "warn"
     };
 
     /**
@@ -3745,7 +3746,7 @@
                 this.validationMessages.valid = true;
 
                 var a = this.toJSON(), i = 0, l = a.length;
-                logger.debug("AUGMENTED: Collection Validate: Beginning with " + l + " models.");
+                //logger.debug("AUGMENTED: Collection Validate: Beginning with " + l + " models.");
                 for (i = 0; i < l; i++) {
                     messages[i] = Augmented.ValidationFramework.validate(a[i], this.schema);
                     if (!messages[i].valid) {
@@ -3753,7 +3754,7 @@
                     }
                 }
 
-                logger.debug("AUGMENTED: Collection Validate: Completed isValid " + this.validationMessages.valid);
+                //logger.debug("AUGMENTED: Collection Validate: Completed isValid " + this.validationMessages.valid);
     	    } else {
     		    this.validationMessages.valid = true;
     	    }
@@ -3797,7 +3798,7 @@
          * @memberof Augmented.Collection
          */
         save: function (options) {
-            Augmented.sync("create", this, options);
+            this.sync("create", this, options);
         },
         /**
          * Collection.update - Updates the collection as a 'update'
@@ -3805,7 +3806,7 @@
          * @memberof Augmented.Collection
          */
         update: function (options) {
-            Augmented.sync("update", this, options);
+            this.sync("update", this, options);
         },
         /**
          * sortByKey - Sorts the collection by a property key
@@ -4343,7 +4344,7 @@
 
     	// true = localStorage, false = sessionStorage
     	if (this.isSupported()) {
-    	    logger.debug("AUGMENTED: localStorage exists");
+    	    //logger.debug("AUGMENTED: localStorage exists");
 
     	    if (this.isPersisted) {
     		this.myStore = localStorage;
@@ -4552,7 +4553,12 @@
          */
         storage: null,
         url: null,
-        initialize: function (attributes, options) {
+        /**
+         * @method initialize Initialize the model with needed wireing
+         * @param {object} options Any options to pass
+         * @memberof Augmented.LocalStorageCollection
+         */
+        initialize: function(options) {
             if (options && options.persist) {
                 this.persist = options.persist;
             }
@@ -4560,7 +4566,14 @@
                 this.key = options.key;
             }
             this.storage = Augmented.LocalStorageFactory.getStorage(this.persist,"augmented.localstorage.collection");
+            this.init(options);
         },
+        /**
+         * @method init Custom init method for the model (called at inititlize)
+         * @param {object} options Any options to pass
+         * @memberof Augmented.LocalStorageCollection
+         */
+        init: function(options) {},
         /**
          * @method fetch Fetch the collection
          * @param {object} options Any options to pass
